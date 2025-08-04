@@ -7,7 +7,7 @@ if __name__ == "__main__":
     first_message = None
     my_phone_number = "Seu número de telefone"
     phone_number = "Número de telefone destinatário"
-    my_client = "http://100.0.0.69:8000"
+    my_client = "http://100.0.0.69:8080"
     client_target = "http://100.0.0.69:8000"
 
     # Pra baixo deve conter a requisição apontando para o client

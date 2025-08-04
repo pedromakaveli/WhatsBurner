@@ -55,9 +55,9 @@ async def envia_mensagem (request: Request):
         'textMessage': re['message']
     }
     
-    send_message = requests.post(endpoint_send_message, headers=headers, json=body)
-    if send_message.status_code == 200:
-        print('Mensagem enviada com sucesso!')
-        request_to_server = requests.post(url_server, body=re) # Aqui deve ser o endpoint servidor
-    return send_message
+    #send_message = requests.post(endpoint_send_message, headers=headers, json=body)
+    #if send_message.status_code == 200:
+        #print('Mensagem enviada com sucesso!')
+    request_to_server = requests.post(f'{url_server}/envia_mensagem', json=re) # Aqui deve ser o endpoint servidor
+    return request_to_server.json()
 
