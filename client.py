@@ -9,6 +9,9 @@ import requests
 
 
 app = FastAPI()
+load_dotenv()
+evolution_key = os.getenv("API_KEY")
+url_server = os.getenv("URL_SERVER")
 
 @app.post("/recebe_mensagem_servidor")
 async def recebe_e_responde_mensagem (request: Request):
@@ -41,6 +44,17 @@ async def envia_mensagem (request: Request):
     '''
     
     re = await request.json()
-    #endpoint_send_message = f"http://100.0.0.31:8080/message/sendText/{instance}"
-    return re
+    endpoint_send_message = f"http://100.0.0.31:8080/message/sendText/{re['instance']}"
+    
+    headers = {'apikey': evolution_key}
+    body = {
+        'number': re['message_to'],
+        'textMessage': re['message']
+    }
+    
+    send_message = requests.post(endpoint_send_message, headers=headers, json=body)
+    if send_message.status_code == 200:
+        print('Mensagem enviada com sucesso!')
+        request_to_server = requests.post(url_server, body=re) # Aqui deve ser o endpoint servidor
+    return send_message
 
