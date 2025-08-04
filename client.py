@@ -7,7 +7,6 @@ from pydantic import BaseModel
 import random
 import requests
 
-
 app = FastAPI()
 load_dotenv()
 evolution_key = os.getenv("API_KEY")
@@ -21,6 +20,10 @@ async def recebe_e_responde_mensagem (request: Request):
     baseado em seu índice
 
     Essa função deve chamar o endpoint de enviar mensagem da Evolution API
+    essa função recebe uma mensagem do servidor e deve enviar uma resposta
+    para o cliente que enviou a mensagem, utilizando o endpoint
+    /envia_mensagem (endpoint server.py) e deve enviar também nessa função
+    a mensagem utilizando o endpoint de send message da Evolution API
     '''
     
     body = {
