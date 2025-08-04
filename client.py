@@ -1,6 +1,8 @@
 from typing import Union
-
+from dotenv import load_dotenv
+import os
 from fastapi import FastAPI
+from fastapi import Request
 from pydantic import BaseModel
 import random
 import requests
@@ -37,9 +39,8 @@ async def envia_mensagem (request: Request):
     para que ele receba a mensagem e possa responder
     
     '''
+    
     re = await request.json()
-
-    my_client_url = None
-
-    return None
+    #endpoint_send_message = f"http://100.0.0.31:8080/message/sendText/{instance}"
+    return re
 
