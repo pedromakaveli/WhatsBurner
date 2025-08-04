@@ -6,6 +6,7 @@ from fastapi import Request
 from pydantic import BaseModel
 import random
 import requests
+import httpx
 
 app = FastAPI()
 load_dotenv()
@@ -25,12 +26,11 @@ async def recebe_e_responde_mensagem (request: Request):
     /envia_mensagem (endpoint server.py) e deve enviar também nessa função
     a mensagem utilizando o endpoint de send message da Evolution API
     '''
-    
-    body = {
 
-    }
 
-    re = None
+    re = await request.json()
+    print(re)
+    return re
 
 @app.post("/envia_mensagem_para_servidor")
 
@@ -47,17 +47,25 @@ async def envia_mensagem (request: Request):
     '''
     
     re = await request.json()
-    endpoint_send_message = f"http://100.0.0.31:8080/message/sendText/{re['instance']}"
+    #endpoint_send_message = f"http://100.0.0.31:8080/message/sendText/{re['instance']}"
     
-    headers = {'apikey': evolution_key}
-    body = {
-        'number': re['message_to'],
-        'textMessage': re['message']
-    }
+    #headers = {'apikey': evolution_key}
+    # body = {
+    #     'number': re['message_to'],
+    #     'textMessage': re['message']
+    # }
     
     #send_message = requests.post(endpoint_send_message, headers=headers, json=body)
     #if send_message.status_code == 200:
         #print('Mensagem enviada com sucesso!')
-    request_to_server = requests.post(f'{url_server}/envia_mensagem', json=re) # Aqui deve ser o endpoint servidor
-    return request_to_server.json()
+
+    async with httpx.AsyncClient() as client:
+        # Envia para o SERVER na porta 8081
+        response = await client.post(
+            f'{url_server}/envia_mensagem',
+            json=re,
+            timeout=10.0
+        )
+    return response.json()
+
 
