@@ -12,6 +12,7 @@ app = FastAPI()
 load_dotenv()
 evolution_key = os.getenv("API_KEY")
 url_server = os.getenv("URL_SERVER")
+instance = os.getenv("INSTANCE")
 
 @app.post("/recebe_mensagem_servidor")
 async def recebe_e_responde_mensagem (request: Request):
@@ -29,8 +30,36 @@ async def recebe_e_responde_mensagem (request: Request):
 
 
     re = await request.json()
-    print(re)
-    return re
+    endpoint_send_message = f"http://100.0.0.31:8080/message/sendText/{instance}"
+    headers = {'apikey': evolution_key}
+    answer = None # Aqui você deve implementar a lógica para buscar a resposta correta
+    body = {
+        'number': re['message_from'],
+        'textMessage': answer # será necessário buscar a resposta correta no arquivo .env
+    }
+
+    json_servidor = {
+        "message_from": re['message_to'],
+        "message_to": re['message_from'],
+        "message": answer,
+        "url_client_origem": re['url_client'],
+        "url_client": re['url_client_origem']
+    }
+    
+    send_message = requests.post(endpoint_send_message, headers=headers, json=body)
+    if send_message.status_code == 200:
+        print('Mensagem enviada com sucesso!')
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f'{url_server}/envia_mensagem',
+                json=json_servidor,
+                timeout=10.0
+            )
+
+            return response.json()
+    else:
+        print(f'Erro ao enviar mensagem: {send_message.status_code}')
+    
 
 @app.post("/envia_mensagem_para_servidor")
 
@@ -47,25 +76,25 @@ async def envia_mensagem (request: Request):
     '''
     
     re = await request.json()
-    #endpoint_send_message = f"http://100.0.0.31:8080/message/sendText/{re['instance']}"
+    endpoint_send_message = f"http://100.0.0.31:8080/message/sendText/{instance}"
     
-    #headers = {'apikey': evolution_key}
-    # body = {
-    #     'number': re['message_to'],
-    #     'textMessage': re['message']
-    # }
+    headers = {'apikey': evolution_key}
+    body = {
+        'number': re['message_to'],
+        'textMessage': re['message']
+    }
     
-    #send_message = requests.post(endpoint_send_message, headers=headers, json=body)
-    #if send_message.status_code == 200:
-        #print('Mensagem enviada com sucesso!')
+    send_message = requests.post(endpoint_send_message, headers=headers, json=body)
+    if send_message.status_code == 200:
+        print('Mensagem enviada com sucesso!')
 
-    async with httpx.AsyncClient() as client:
-        # Envia para o SERVER na porta 8081
-        response = await client.post(
-            f'{url_server}/envia_mensagem',
-            json=re,
-            timeout=10.0
-        )
-    return response.json()
+        async with httpx.AsyncClient() as client:
+            
+            response = await client.post(
+                f'{url_server}/envia_mensagem',
+                json=re,
+                timeout=10.0
+            )   
+        return response.json()
 
 
