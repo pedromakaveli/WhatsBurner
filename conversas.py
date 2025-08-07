@@ -1,0 +1,20 @@
+respostas = {
+    "E aí": "E aí, meu velho! Viu o jogo ontem?",
+    "E aí, meu velho! Viu o jogo ontem?": "Vi sim mano, que sufoco no segundo tempo kkk",
+    "Vi sim mano, que sufoco no segundo tempo kkk": "Nem me fala, quase infartei com aquele gol no final",
+    "Nem me fala, quase infartei com aquele gol no final": "O juiz tava doido também, deu umas faltas nada a ver",
+    "O juiz tava doido também, deu umas faltas nada a ver": "Clássico é sempre assim, emoção até o último segundo",
+    "Clássico é sempre assim, emoção até o último segundo": "Tu acha que a gente chega no G4 esse ano?",
+    "Tu acha que a gente chega no G4 esse ano?": "Se continuar jogando assim, dá pra sonhar sim",
+    "Se continuar jogando assim, dá pra sonhar sim": "Tem que parar de vacilar fora de casa né",
+    "Tem que parar de vacilar fora de casa né": "Verdade... e nosso ataque precisa ser mais eficiente",
+    "Verdade... e nosso ataque precisa ser mais eficiente": "Mas também, sem meia armador fica difícil",
+    "Mas também, sem meia armador fica difícil": "Pois é, o time sente falta de um camisa 10 de verdade",
+    "Pois é, o time sente falta de um camisa 10 de verdade": "Saudades do tempo do Jadson, hein?",
+    "Saudades do tempo do Jadson, hein?": "Demais! A bola chegava redonda no pé do atacante",
+    "Demais! A bola chegava redonda no pé do atacante": "Hoje em dia é só chutão e rezar 😅",
+    "Hoje em dia é só chutão e rezar 😅": "Kkkkk exatamente",
+    "Kkkkk exatamente": "Bora assistir o próximo jogo aqui em casa?",
+    "Bora assistir o próximo jogo aqui em casa?": "Fechou, leva a cerveja que eu preparo a carne 🍻🔥",
+    "Fechou, leva a cerveja que eu preparo a carne 🍻🔥": "Tamo junto, é nóis! ⚽"
+}

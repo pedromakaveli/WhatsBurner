@@ -2,9 +2,10 @@ import requests
 import os
 import argparse
 from dotenv import load_dotenv
-
+from conversas import respostas
+import json
 if __name__ == "__main__":
-    first_message = None
+    first_message = "E aí"
     my_phone_number = "Seu número de telefone"
     phone_number = "Número de telefone destinatário"
     my_client = "http://127.0.0.1:8080"
@@ -15,12 +16,14 @@ if __name__ == "__main__":
 
     load_dotenv()
     body = {
-        "instance": os.getenv("INSTANCE"),
-        "message_from": my_phone_number,
-        "message_to": phone_number,
-        "message": first_message,
-        "url_client_origem": my_client,
-        "url_client": client_target
+        "payload": {
+            "instance": "minha_instancia",
+            "message_from": "5511999999999",
+            "message_to": "5511888888888",
+            "message": first_message,
+            "url_client_origem": "http://127.0.0.1:8080",
+            "url_client": "http://127.0.0.1:8081"
+        }
     }
     
     re = requests.post(f"{my_client}/envia_mensagem_para_servidor", json=body)
