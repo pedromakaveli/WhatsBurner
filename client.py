@@ -18,9 +18,11 @@ instance = os.getenv("INSTANCE")
 
 @app.post("/recebe_mensagem_servidor")
 async def recebe_e_responde_mensagem(request: Request):
+    
     try:
         # 1. Obter dados da requisição
         data = await request.json()
+        
         payload = data.get('payload', {})
         
         # 2. Obter resposta da mensagem
@@ -34,10 +36,23 @@ async def recebe_e_responde_mensagem(request: Request):
                 "message_from": payload.get('message_to', ''),
                 "message_to": payload.get('message_from', ''),
                 "message": answer,
-                "url_client_origem": payload.get('url_client_origem', ''),
+                "url_client_origem": payload.get('url_client', ''),
                 "url_client": payload.get('url_client_origem', '')
             }
         }
+        endpoint_send_message = f"http://100.0.0.31:8080/message/sendText/{instance}"
+        headers = {'apikey': evolution_key}
+        body = {
+            "number": data['payload']['message_from'],
+            "textMessage": {
+            "text": data['payload']['message']
+            }
+        }
+            
+        send_message = requests.post(endpoint_send_message, headers=headers, json=body)
+        
+        if send_message.status_code == 200:
+            print('Mensagem enviada com sucesso!')
         
         # 4. Enviar resposta para o servidor
         async with httpx.AsyncClient() as client:
@@ -69,17 +84,19 @@ async def envia_mensagem (request: Request):
     '''
     
     re = await request.json()
-    #endpoint_send_message = f"http://100.0.0.31:8080/message/sendText/{instance}"
+    endpoint_send_message = f"http://100.0.0.31:8080/message/sendText/{instance}"
     
-    #headers = {'apikey': evolution_key}
-    # body = {
-    #     'number': re['message_to'],
-    #     'textMessage': re['message']
-    # }
+    headers = {'apikey': evolution_key}
+    body = {
+        "number": re['payload']['message_to'],
+        "textMessage": {
+            "text": re['payload']['message']
+        }
+    }
     
-    # send_message = requests.post(endpoint_send_message, headers=headers, json=body)
-    # if send_message.status_code == 200:
-    #     print('Mensagem enviada com sucesso!')
+    send_message = requests.post(endpoint_send_message, headers=headers, json=body)
+    if send_message.status_code == 200:
+        print('Mensagem enviada com sucesso!')
 
     async with httpx.AsyncClient() as client:
             
@@ -91,7 +108,7 @@ async def envia_mensagem (request: Request):
 
         return response.json()
 
-    return re
+    
 
 
 

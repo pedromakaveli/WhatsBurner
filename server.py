@@ -21,7 +21,7 @@ async def envia_mensagem(request: Request):
         try:
             # Envia para o CLIENT na porta 8080
             response = await client.post(
-                f'{body["payload"]["url_client_origem"]}/recebe_mensagem_servidor',
+                f'{body["payload"]["url_client"]}/recebe_mensagem_servidor',
                 json=body,
                 timeout=30.0
             )
