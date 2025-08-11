@@ -9,6 +9,8 @@ import requests
 import httpx
 from conversas import respostas
 import json
+import random
+import time
 
 app = FastAPI()
 load_dotenv()
@@ -24,46 +26,68 @@ async def recebe_e_responde_mensagem(request: Request):
         data = await request.json()
         
         payload = data.get('payload', {})
+        conversas = payload.get('conversas', {})
         
         # 2. Obter resposta da mensagem
         message = payload.get("message", "")
-        answer = respostas.get(message, "Resposta padrão (mensagem não reconhecida)")
-        print(message, answer)
-        
-        # 3. Preparar resposta para o cliente (simulação)
-        response_payload = {
-            "payload": {
-                "message_from": payload.get('message_to', ''),
-                "message_to": payload.get('message_from', ''),
-                "message": answer,
-                "url_client_origem": payload.get('url_client', ''),
-                "url_client": payload.get('url_client_origem', '')
-            }
-        }
-        endpoint_send_message = f"http://100.0.0.31:8080/message/sendText/{instance}"
-        headers = {'apikey': evolution_key}
-        body = {
-            "number": data['payload']['message_from'],
-            "textMessage": {
-            "text": data['payload']['message']
-            }
-        }
+        if message != "Resposta padrão (mensagem não reconhecida)":
+            answer = conversas.get(message, "Resposta padrão (mensagem não reconhecida)")
+            print(message, answer)
             
-        send_message = requests.post(endpoint_send_message, headers=headers, json=body)
-        
-        if send_message.status_code == 200:
-            print('Mensagem enviada com sucesso!')
-        
-        # 4. Enviar resposta para o servidor
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                f'{url_server}/envia_mensagem',
-                json=response_payload,
-                timeout=10.0
-            )
-        
-        # 5. Retornar confirmação
-        return {"status": "success", "message": answer}
+            # 3. Preparar resposta para o cliente (simulação)
+            response_payload = {
+                "payload": {
+                    "message_from": payload.get('message_to', ''),
+                    "message_to": payload.get('message_from', ''),
+                    "message": answer,
+                    "url_client_origem": payload.get('url_client', ''),
+                    "url_client": payload.get('url_client_origem', ''),
+                    "conversas": conversas
+                }
+            }
+            
+            time_to_answer = random.randint(800,14000)
+            freeze_time = [True, False]
+            freeze_now = random.choice(freeze_time)
+            
+            endpoint_send_message = f"http://100.0.0.31:8080/message/sendText/{instance}"
+            headers = {'apikey': evolution_key}
+            body = {
+                "number": data['payload']['message_from'],
+                
+                "textMessage": {
+                    "text": data['payload']['message']
+                },
+                
+                "options": {
+                    "delay": time_to_answer
+                }
+            }
+            
+            read_message = requests.put(f'http://100.0.0.31:8080/chat/MarkMessageAsRead/{instance}', headers={'apikey': evolution_key}, 
+                json={
+                "read_messages": [
+                    {
+                        "remoteJid": data['payload']['message_from'] + '@s.whatsapp.net',
+                    }
+                ]
+            }) 
+            
+            send_message = requests.post(endpoint_send_message, headers=headers, json=body)
+            
+            if send_message.status_code == 200:
+                print('Mensagem enviada com sucesso!')
+            
+            # 4. Enviar resposta para o servidor
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f'{url_server}/envia_mensagem',
+                    json=response_payload,
+                    timeout=10.0
+                )
+            
+            # 5. Retornar confirmação
+            return {"status": "success", "message": answer}
         
     except Exception as e:
         return {"error": f"Erro ao processar mensagem: {str(e)}"}
@@ -91,6 +115,10 @@ async def envia_mensagem (request: Request):
         "number": re['payload']['message_to'],
         "textMessage": {
             "text": re['payload']['message']
+        },
+        
+        "options": {
+            "delay": 123
         }
     }
     
